@@ -1,6 +1,15 @@
 <template>
   <div class="container">
     <div class="title">Vue2 to Vue3 Setup</div>
+    <div style="display: flex; justify-content: center">
+      <a
+        href="https://github.com/CoderHyun/vue2ToVue3"
+        target="_blank"
+        style="font-size: 26px"
+      >
+        GitHub
+      </a>
+    </div>
     <div class="remark">
       仅提供export default 中的代码，导入的data或者method需要手动删除。
       <p>$refs使用的变量名请保持唯一!!!</p>
