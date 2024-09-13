@@ -33,6 +33,7 @@
           style="min-height: 200px"
         />
       </a-col>
+      <a-col :span="2" class="flex-container"> ==> </a-col>
       <a-col :span="11">
         <Codemirror
           v-model:value="finalCode"
