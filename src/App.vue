@@ -10,10 +10,18 @@
         GitHub
       </a>
     </div>
-    <div class="remark">
-      仅提供export default 中的代码，导入的data或者method需要手动删除。
-      <p>$refs使用的变量名请保持唯一!!!</p>
+    <div>
+      <h4>直接复制Vue2代码即可</h4>
+      注意：
+      <ol>
+        <li>ref 命名请勿和 data 中的变量冲突</li>
+        <li>style 代码不会拼接。</li>
+      </ol>
     </div>
+    <a-affix :offset-top="20">
+      <a-button type="primary" @click="referenceClick">转换</a-button>
+    </a-affix>
+
     <a-row flex>
       <a-col :span="11">
         <Codemirror
@@ -24,9 +32,6 @@
           placeholder=""
           style="min-height: 200px"
         />
-      </a-col>
-      <a-col :span="2" class="flex-container">
-        <a-button type="primary" @click="referenceClick">转换 -></a-button>
       </a-col>
       <a-col :span="11">
         <Codemirror
@@ -46,64 +51,12 @@ import "codemirror/mode/javascript/javascript.js";
 import Codemirror from "codemirror-editor-vue3";
 import type { CmComponentRef } from "codemirror-editor-vue3";
 import type { EditorConfiguration } from "codemirror";
-import Vue2ToCompositionApi from "./utils/vue2tovue3";
+import { toVue3Code } from "./utils/to-v3";
 
-const finalCode: Ref<string> = ref(``);
-// import { filterIndex } from '@/utils/index';
+const finalCode: Ref<string> = ref("");
 
-const code = ref(`
+const code = ref("");
 
-export default {
-  mixins:[filterIndex],
-  data() {
-    return {
-      index: 1,
-      loginForm: {
-        username: '',
-        password: '',
-        rememberMe: false,
-        code: '',
-        uuid: '',
-        loginType: ''
-      },
-      loginRules: {
-        username: [{
-          required: true,
-          trigger: 'blur',
-          message: '手机号码不能为空'
-        },
-        {
-          pattern: /^1[3|4|5|6|7|8|9][0-9]\\d{8}$/,
-          message: '请输入正确的手机号码',
-          trigger: 'blur'
-        }
-        ],
-        password: [{
-          required: true,
-          trigger: 'blur',
-          message: '密码不能为空'
-        }],
-        code: [{
-          required: true,
-          trigger: 'change',
-          message: '验证码不能为空'
-        }]
-      },
-    };
-  },
-  methods: {
-    getCode() {
-      console.log(index)
-    },
-    checkPhone() {
-      this.loginRules.code[0].required = false;
-      this.$nextTick(() => {
-          this.index = 2
-      })
-    },
-  }
-};
-`);
 const cmRef = ref<CmComponentRef>();
 const cmOptions: EditorConfiguration = {
   mode: "text/javascript",
@@ -120,7 +73,7 @@ onMounted(() => {
 });
 
 function referenceClick() {
-  finalCode.value = Vue2ToCompositionApi(code.value) as string;
+  finalCode.value = toVue3Code(code.value);
 }
 
 onUnmounted(() => {

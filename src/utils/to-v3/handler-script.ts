@@ -1,3 +1,10 @@
+declare global {
+  interface Window {
+    Vue2ToCompositionApiVmBody: any;
+    require: any;
+  }
+}
+
 import {
   VmContent,
   VmKeys,
@@ -7,14 +14,7 @@ import {
   UtilsMethods,
 } from "./types";
 
-import { getPrototype } from "./common/shared";
-
-declare global {
-  interface Window {
-    Vue2ToCompositionApiVmBody: any;
-    require: any;
-  }
-}
+import { getPrototype } from "../common/shared";
 
 /**
  *
@@ -32,6 +32,7 @@ function Vue2ToCompositionApi(
     indent_size: "4",
   }
 ): string | undefined {
+  // debugger;
   // 如果是非字符串类型，抛出错误
   if (getPrototype(entryScriptContent) !== "string") {
     throw new Error(
@@ -56,10 +57,6 @@ function Vue2ToCompositionApi(
       eol: "\n",
       brace_style: "collapse-preserve-inline",
     };
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const esprima = require("esprima");
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const estraverse = require("estraverse");
 
     // 用于匹配 JavaScript 中的对象字面量或代码块。
     const braceRegExp = /\{[\s\S]*\}/g;
@@ -75,6 +72,7 @@ function Vue2ToCompositionApi(
       entryScriptContent,
       jsBeautifyOptions
     );
+
     // 去除 component，和mixins，导入的methods
     const modelScriptContent: string | undefined = (function () {
       const componentsRegExp = /components: ((\{\})|(\{[\s\S]+?\}))[,\n]/;
@@ -85,13 +83,13 @@ function Vue2ToCompositionApi(
         .replace(componentsRegExp, "")
         .replace(mixinsRegExp, "");
     })();
+
     if (modelScriptContent) {
       eval(`window.Vue2ToCompositionApiVmBody = ${modelScriptContent}`);
-      console.log(window.Vue2ToCompositionApiVmBody);
     } else {
       throw new Error(`Vue2ToCompositionApi 内容不是有效内容`);
     }
-    console.log(123);
+
     // 初步处理后的结果
     const vmBody: any = window.Vue2ToCompositionApiVmBody;
 
@@ -460,6 +458,8 @@ function Vue2ToCompositionApi(
               if (methodName && methodFunctionStr) {
                 methodValues.push(methodFunctionStr);
               }
+            } else {
+              console.log("not in function ");
             }
           }
           if (methodValues.length > 0) {
